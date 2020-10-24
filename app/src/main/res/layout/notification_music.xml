@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="wrap_content"
     android:orientation="horizontal">
 
     <ImageView
-        android:layout_width="120dp"
+        android:layout_width="80dp"
         android:layout_height="match_parent"
         android:src="@mipmap/ic_launcher" />
 
@@ -13,26 +13,33 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:lines="1"
-            android:text="Trung Doan Dep trai"/>
+            android:text="Trung Doan Dep trai" />
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="wrap_content">
+
             <ImageView
+                android:id="@+id/img_previous"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:src="@drawable/ic_baseline_skip_previous_24" />
+
             <ImageView
+                android:id="@+id/img_play_paused"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:src="@drawable/ic_baseline_play_arrow_24" />
+
             <ImageView
+                android:id="@+id/img_next"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

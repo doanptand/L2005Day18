@@ -3,6 +3,7 @@ package com.t3h.service.service;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,10 +13,13 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 
+import com.t3h.service.MainActivity;
 import com.t3h.service.R;
 import com.t3h.service.media.MediaManager;
 import com.t3h.service.util.Const;
@@ -53,11 +57,28 @@ public class MusicService extends Service {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void pushNotification() {
-        Context context;
-        Notification.Builder builder = new Notification.Builder(this);
-        builder.setContentTitle("Music");
-        builder.setContentText("Song name");
+
+        RemoteViews remoteViews
+                = new RemoteViews(getPackageName(), R.layout.notification_music);
+
+        Intent nextIntent = new Intent(Const.ACTION_NEXT);
+        PendingIntent nextPendingIntent =
+                PendingIntent.getBroadcast(
+                        this,
+                        2,
+                        nextIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.img_next, nextPendingIntent);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent mainIntent = PendingIntent.getActivity(this,
+                1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+//        builder.setContentTitle("Music");
+//        builder.setContentText("Song name");
+        builder.setContent(remoteViews);
         builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentIntent(mainIntent);
         NotificationChannel channel = new NotificationChannel(
                 "123", "123",
                 NotificationManager.IMPORTANCE_HIGH);
