@@ -6,11 +6,14 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
@@ -59,6 +62,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startMusic();
         }
         register();
+
+        //FIXME remove later
+        testContentProvider();
+    }
+
+    private void testContentProvider() {
+        Uri insertUri =
+                Uri.parse("content://com.t3h.service.provider/user");
+        ContentValues values = new ContentValues();
+        values.put("_id", 1);
+        values.put("_username", "doanpt");
+        values.put("_password", "doanpt");
+        getContentResolver().insert(insertUri, values);
+
+        Cursor cursor = getContentResolver().query(insertUri, null,null,
+                null,null);
     }
 
     private void register() {
@@ -162,14 +181,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(Const.ACTION_NEXT);
         sendBroadcast(intent);
     }
+
     private void previousSong() {
         Intent intent = new Intent(Const.ACTION_PREVIOUS);
         sendBroadcast(intent);
     }
+
     private void playSong() {
         Intent intent = new Intent(Const.ACTION_PLAY);
         sendBroadcast(intent);
     }
+
     private void pauseSong() {
         Intent intent = new Intent(Const.ACTION_PAUSE);
         sendBroadcast(intent);

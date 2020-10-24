@@ -30,6 +30,11 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <provider
+            android:name="com.t3h.service.provider.UserProvider"
+            android:authorities="com.t3h.service.provider"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>
