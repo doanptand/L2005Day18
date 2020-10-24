@@ -7,8 +7,10 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
@@ -16,13 +18,18 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.t3h.service.receiver.FirstReceiver;
 import com.t3h.service.service.MusicService;
+import com.t3h.service.util.Const;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int STORAGE_PERMISSION = 1000;
     private SeekBar sbTime;
     private Button btnPrevious, btnPlay, btnNext, btnPause;
     private MusicService musicService;
+
+    private FirstReceiver firstReceiver;
+
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -51,6 +58,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             startMusic();
         }
+        register();
+    }
+
+    private void register() {
+        firstReceiver = new FirstReceiver();
+
+        IntentFilter filter1 = new IntentFilter();
+        filter1.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        filter1.addAction(Intent.ACTION_SCREEN_ON);
+        filter1.addAction("com.doan.deptrai");
+
+        registerReceiver(firstReceiver, filter1);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(firstReceiver);
     }
 
     @Override
@@ -106,25 +131,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_next:
-                if (musicService != null) {
-                    musicService.getMediaManager().next();
-                }
+                nextSong();
+//                sendDemoAction();
+//                if (musicService != null) {
+//                    musicService.getMediaManager().next();
+//                }
                 break;
             case R.id.btn_previous:
-                if (musicService != null) {
-                    musicService.getMediaManager().previous();
-                }
+                previousSong();
+//                if (musicService != null) {
+//                    musicService.getMediaManager().previous();
+//                }
                 break;
             case R.id.btn_play:
-                if (musicService != null) {
-                    musicService.getMediaManager().play();
-                }
+                playSong();
+//                if (musicService != null) {
+//                    musicService.getMediaManager().play();
+//                }
                 break;
             case R.id.btn_pause:
-                if (musicService != null) {
-                    musicService.getMediaManager().pause();
-                }
+                pauseSong();
+//                if (musicService != null) {
+//                    musicService.getMediaManager().pause();
+//                }
                 break;
         }
+    }
+
+    private void nextSong() {
+        Intent intent = new Intent(Const.ACTION_NEXT);
+        sendBroadcast(intent);
+    }
+    private void previousSong() {
+        Intent intent = new Intent(Const.ACTION_PREVIOUS);
+        sendBroadcast(intent);
+    }
+    private void playSong() {
+        Intent intent = new Intent(Const.ACTION_PLAY);
+        sendBroadcast(intent);
+    }
+    private void pauseSong() {
+        Intent intent = new Intent(Const.ACTION_PAUSE);
+        sendBroadcast(intent);
+    }
+
+    private void sendDemoAction() {
+        Intent intent = new Intent("com.doan.deptrai");
+        sendBroadcast(intent);
     }
 }

@@ -4,8 +4,10 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -16,16 +18,28 @@ import androidx.annotation.RequiresApi;
 
 import com.t3h.service.R;
 import com.t3h.service.media.MediaManager;
+import com.t3h.service.util.Const;
+
+import java.util.logging.Logger;
 
 public class MusicService extends Service {
     private MediaManager mediaManager;
     private MusicBinder binder = new MusicBinder();
+    private MusicReceiver musicReceiver;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d("doanpt", "onCreate");
         mediaManager = new MediaManager(this);
+        musicReceiver = new MusicReceiver();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Const.ACTION_NEXT);
+        filter.addAction(Const.ACTION_PAUSE);
+        filter.addAction(Const.ACTION_PREVIOUS);
+        filter.addAction(Const.ACTION_PLAY);
+        registerReceiver(musicReceiver, filter);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -61,7 +75,9 @@ public class MusicService extends Service {
     @Override
     public void onDestroy() {
         Log.d("doanpt", "onDestroy");
+        unregisterReceiver(musicReceiver);
         super.onDestroy();
+
 
     }
 
@@ -79,5 +95,28 @@ public class MusicService extends Service {
 
     public MediaManager getMediaManager() {
         return mediaManager;
+    }
+
+    public class MusicReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("doanpt", "onReceive action:" + intent.getAction());
+            switch (intent.getAction()) {
+                case Const.ACTION_PLAY:
+                    mediaManager.play();
+                    break;
+                case Const.ACTION_PREVIOUS:
+                    mediaManager.previous();
+                    break;
+                case Const.ACTION_PAUSE:
+                    mediaManager.pause();
+                    break;
+                case Const.ACTION_NEXT:
+                    mediaManager.next();
+                    break;
+
+            }
+        }
     }
 }
